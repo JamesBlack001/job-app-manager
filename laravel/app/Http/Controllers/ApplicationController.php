@@ -2,20 +2,28 @@
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateJobRequest;
 
 use Illuminate\Http\Request;
 use App\Jobs;
 
 class ApplicationController extends Controller {
 
+
+	private $job;
+
+	public function __construct(Jobs $job)
+	{
+		$this->job=$job;
+	}
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	public function index(Jobs $job)
+	public function index()
 	{
-		$jobs= $job->get();//Jobs::get();
+		$jobs= $this->job->get();//Jobs::get();
 
 		return view('jobs.index',compact('jobs'));
 	}
@@ -27,7 +35,7 @@ class ApplicationController extends Controller {
 	 */
 	public function create()
 	{
-		//
+		return view('jobs.create');
 	}
 
 	/**
@@ -35,9 +43,14 @@ class ApplicationController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(CreateJobRequest $request, Jobs $job)
 	{
-		//
+		
+		$input = $request->all();
+		$input['slug']='title'.$request->get('id');
+		$job->create($input);
+
+		return redirect()->route('jobs_path');
 	}
 
 	/**
@@ -60,9 +73,9 @@ class ApplicationController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit(Jobs $job)
 	{
-		//
+		return view('jobs.edit', compact('job'));
 	}
 
 	/**
@@ -71,9 +84,11 @@ class ApplicationController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(CreateJobRequest $request, Jobs $job)
 	{
-		//
+
+		$job->fill($request->input())->save();
+		return redirect('jobs');
 	}
 
 	/**
@@ -82,9 +97,11 @@ class ApplicationController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy(Jobs $job)
 	{
-		//
+		$job->delete();
+
+		return redirect('jobs');
 	}
 
 }

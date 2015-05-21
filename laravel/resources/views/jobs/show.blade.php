@@ -24,7 +24,6 @@
 	<h3> {{ $job->companyName }} </h3>
 	<h3> {{ $job->web_link }} </h3>
 	@if ($job->notes)
-
 			<h3> {{ $job->notes }} </h3>
 
 	@endif
@@ -36,5 +35,8 @@
 	<h3> {{ $job->created_at }} </h3>
 	<h3> {{ $job->updated_at }} </h3>
 
+	{!! link_to_route('job_edit', 'Edit Job', [$job->id] ) !!}
+
+	{!! link_to_route('jobs_path', 'Go Back Home') !!}
 
 @stop
